@@ -33,3 +33,13 @@ Bring Project Argus online and establish the development environment.
 🧱 **Brick #1 laid**
 
 Project Argus officially came online.
+
+### Git Debugging Note
+
+During the initial setup, Git was accidentally initialized in the parent `Projects` directory instead of the `Project-Argus` directory.
+
+I diagnosed the issue using:
+
+```bash
+pwd
+git rev-parse --show-toplevel
