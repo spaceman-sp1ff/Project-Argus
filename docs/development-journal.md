@@ -43,3 +43,51 @@ I diagnosed the issue using:
 ```bash
 pwd
 git rev-parse --show-toplevel
+
+
+---
+
+# Session 2 - Brick #3
+
+**Date:** July 17, 2026
+
+## Goal
+
+Design and implement a provider abstraction layer so Project Argus can support multiple AI backends without changing application code.
+
+## Accomplished
+
+- Created the `AIProvider` abstract base class.
+- Implemented the `OpenAIProvider` using the OpenAI Responses API.
+- Implemented the `OllamaProvider` using the official Ollama Python client.
+- Added provider-specific exception handling for authentication, quota, configuration, connection, and request errors.
+- Created a `ProviderFactory` to automatically instantiate the configured AI provider.
+- Added environment-based provider selection through `AI_PROVIDER`.
+- Successfully installed and configured Ollama locally.
+- Downloaded the `llama3.2:3b` model.
+- Verified successful end-to-end local inference using Project Argus.
+- Updated `test_provider.py` to use the provider factory instead of directly instantiating a provider.
+
+## Lessons Learned
+
+- Designing around interfaces rather than concrete implementations makes the application significantly easier to extend.
+- Separating provider logic from application logic allows new AI backends to be added with minimal changes.
+- ChatGPT Plus and the OpenAI API are separate services with separate billing and quota systems.
+- Building locally with Ollama enables development without API costs.
+
+## Milestone
+
+🧱 **Brick #3 laid**
+
+Project Argus is now provider-agnostic and can switch between supported AI providers through configuration alone.
+
+## Next Objective
+
+Begin building the **Argus Engine**, which will become the central orchestrator responsible for:
+
+- AI provider management
+- Memory
+- Context management
+- Tool execution
+- Agent coordination
+- Conversation management
