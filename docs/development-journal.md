@@ -255,3 +255,76 @@ The runtime will become responsible for:
 - Provider orchestration
 - Automatic persistence
 - Session management
+
+---
+
+# Session 5 — Brick #5.4
+
+**Date:** July 18, 2026
+
+## Goal
+
+Separate orchestration from execution by introducing the Argus Runtime as the central coordinator for conversational workflows while simplifying the Argus Engine into a dedicated execution component.
+
+## Accomplished
+
+- Refactored the `Argus` Engine into a dedicated execution component.
+- Renamed the Engine's public entry point from `chat()` to `execute()`.
+- Removed conversation orchestration from the Engine.
+- Added the `provider_name` property to expose provider information through a public interface.
+- Extended the `ArgusRuntime` with a `chat()` workflow.
+- Moved request validation into the Runtime.
+- Moved conversation management into the Runtime.
+- Moved context construction into the Runtime.
+- Moved conversation persistence into the Runtime.
+- Moved `ChatResponse` construction into the Runtime.
+- Successfully verified the Runtime after refactoring.
+
+## Architecture Evolution
+
+The application's responsibilities changed from:
+
+```text
+Argus Engine
+    ├── Request validation
+    ├── Conversation management
+    ├── Context construction
+    ├── AI execution
+    └── Response construction
+```
+
+to:
+
+```text
+ArgusRuntime
+    ├── Request validation
+    ├── Conversation management
+    ├── Context construction
+    ├── Conversation persistence
+    ├── Response construction
+    │
+    ▼
+Argus Engine
+    │
+    ▼
+AI Provider
+```
+
+This establishes a clear separation between application orchestration and AI execution.
+
+## Lessons Learned
+
+- Orchestration and execution are distinct architectural responsibilities.
+- The Runtime coordinates application workflows while the Engine focuses solely on AI execution.
+- Public interfaces should expose behavior instead of implementation details.
+- Incremental refactoring makes large architectural changes significantly easier to validate.
+
+## Milestone
+
+🧱 **Brick #5.4 completed**
+
+Project Argus now has a dedicated Runtime responsible for orchestration while the Argus Engine has been simplified into a reusable execution component.
+
+## Next Objective
+
+Update `main.py` to communicate exclusively through the `ArgusRuntime`, making the Runtime the official application entry point for all conversational interactions.
