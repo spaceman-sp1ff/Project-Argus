@@ -2,7 +2,15 @@
 
 > A modular AI runtime for orchestrating intelligent agents, tools, memory, and multiple language model providers.
 
-**Current Version:** v0.3.0
+**Current Version:** v0.4.0-dev
+---
+
+**Status:** 🚧 Active Development
+
+**Current Milestone:** Brick #4 – Argus Engine
+
+**Latest Achievement:** Provider-agnostic architecture with local and cloud LLM support.
+
 
 ---
 
@@ -35,8 +43,13 @@ The project is being built from the ground up using production-quality software 
 
 ## Currently Building
 
-- 🚧 Argus Engine
-
+- 🚧 Argus Engine (Core orchestration layer)
+    - Central request routing
+    - Provider management
+    - Foundation for memory
+    - Foundation for tools
+    - Foundation for agent orchestration
+    
 ## Upcoming Milestones
 
 - Memory system
@@ -85,6 +98,9 @@ Project Argus aims to provide:
 ```
                  Project Argus
 
+                      │
+                      ▼
+                 Argus Engine
                       │
                       ▼
                ProviderFactory

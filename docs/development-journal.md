@@ -91,3 +91,71 @@ Begin building the **Argus Engine**, which will become the central orchestrator 
 - Tool execution
 - Agent coordination
 - Conversation management
+---
+
+# Session 3 - Brick #4 (Started)
+
+**Date:** July 17, 2026
+
+## Goal
+
+Begin building the Argus Engine, establishing a central orchestration layer that will eventually manage AI providers, memory, tools, agents, and conversations.
+
+## Accomplished
+
+- Created the `app/engine/` package.
+- Implemented the initial `Argus` engine.
+- Moved application orchestration out of `main.py`.
+- Updated `main.py` to communicate exclusively through the Argus engine.
+- Successfully verified end-to-end communication using the configured AI provider through the engine.
+
+## Architecture Evolution
+
+The application's execution flow changed from:
+
+```text
+main.py
+   │
+   ▼
+ProviderFactory
+   │
+   ▼
+AI Provider
+```
+
+to:
+
+```text
+main.py
+   │
+   ▼
+Argus Engine
+   │
+   ▼
+ProviderFactory
+   │
+   ▼
+AI Provider
+```
+
+This marks the transition from building provider integrations to building the core runtime that will power Project Argus.
+
+## Lessons Learned
+
+Separating orchestration from application entry points keeps the architecture significantly cleaner and allows new capabilities to be added without expanding `main.py`.
+
+The Argus Engine now serves as the foundation upon which memory, tools, context management, and agent orchestration will be built.
+
+## Milestone
+
+🧱 **Brick #4 officially started**
+
+The Argus Engine is now the central entry point for all AI interactions.
+
+## Next Objectives
+
+- Introduce a `ChatRequest` object.
+- Design conversation management.
+- Implement memory management.
+- Develop the tool execution framework.
+- Begin agent orchestration.
