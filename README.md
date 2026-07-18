@@ -1,157 +1,138 @@
 # Project Argus
 
-> A modular AI runtime for orchestrating intelligent agents, tools, memory, and multiple language model providers.
+> **A modular AI runtime for orchestrating intelligent agents, tools, memory, and multiple language model providers.**
 
-**Current Version:** v0.4.0-dev
----
-
-**Status:** 🚧 Active Development
-
-**Current Milestone:** Brick #4 – Argus Engine
-
-**Latest Achievement:** Provider-agnostic architecture with local and cloud LLM support.
-
+![Status](https://img.shields.io/badge/status-active%20development-orange)
+![Version](https://img.shields.io/badge/version-v0.5.0--dev-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
 
 ---
 
-# Vision
+## Vision
 
 Project Argus is an open-source AI runtime focused on building reliable, maintainable, and extensible AI systems.
 
-Rather than being a single chatbot, Argus is designed to become an operating system for AI—capable of coordinating specialized agents, interacting with external services, executing complex workflows, and seamlessly switching between local and cloud language models.
+Rather than being a single chatbot, Argus is being engineered as an operating system for AI—capable of coordinating specialized agents, managing memory, executing tools, orchestrating workflows, and seamlessly switching between local and cloud language models.
 
-The project is being built from the ground up using production-quality software engineering practices with an emphasis on modular architecture, readability, testing, maintainability, and long-term extensibility.
+Every component is being developed using production-quality software engineering practices with an emphasis on:
+
+- Clean Architecture
+- Maintainability
+- Extensibility
+- Testing
+- Documentation
+- Long-term evolution
 
 ---
 
 # Current Status
 
-**Stage:** Early Development (v0.3.0)
+**Current Version:** `v0.5.0-dev`
+
+**Development Stage:** Phase 5 — Runtime Integration
+
+**Latest Milestone:** ✅ Brick #4 Completed — Conversation Architecture & Persistence
+
+**Current Objective:** Build the Argus Runtime that orchestrates conversations, providers, context, and persistence.
+
+---
+
+# Features
 
 ## Completed
 
-- ✅ Project architecture established
+- ✅ Modular project architecture
 - ✅ Environment configuration
-- ✅ Modular Python package structure
-- ✅ Git & GitHub workflow
-- ✅ AI provider abstraction layer
+- ✅ Provider abstraction layer
 - ✅ OpenAI provider
 - ✅ Ollama provider
 - ✅ ProviderFactory
-- ✅ Local LLM support
-- ✅ Centralized provider exception handling
+- ✅ Argus Engine
+- ✅ Conversation domain model
+- ✅ Immutable Message model
+- ✅ ContextBuilder
+- ✅ Runtime system prompt management
+- ✅ ConversationRepository abstraction
+- ✅ JSON conversation persistence
+- ✅ Persistent conversation loading
+- ✅ Full save/load round-trip validation
+
+---
 
 ## Currently Building
 
-- 🚧 Argus Engine (Core orchestration layer)
-    - Central request routing
-    - Provider management
-    - Foundation for memory
-    - Foundation for tools
-    - Foundation for agent orchestration
-    
-## Upcoming Milestones
+### Phase 5 — Argus Runtime
 
-- Memory system
-- Tool execution framework
-- Agent framework
-- Conversation management
-- Workflow orchestration
+The next milestone integrates every completed component into a unified runtime.
+
+Responsibilities include:
+
+- Runtime orchestration
+- Conversation lifecycle management
+- Automatic persistence
+- Provider execution
+- Session management
 
 ---
 
-# Design Principles
+# Architecture
 
-Project Argus is intentionally built around clean architecture principles.
+Current architecture:
 
-Core design goals include:
+```text
+                           Project Argus
 
-- Provider-independent AI integration
-- Loose coupling
-- Dependency inversion
-- Modular components
-- High testability
-- Clear separation of responsibilities
-- Incremental development
-- Long-term maintainability
+                                  │
+                                  ▼
 
----
+                           Argus Runtime
 
-# Goals
+        ┌───────────────────┼───────────────────┐
+        ▼                   ▼                   ▼
 
-Project Argus aims to provide:
+ Conversation        ContextBuilder      Repository
+        │                                      │
+        ▼                                      ▼
 
-- Modular AI agent architecture
-- Provider-independent LLM support
-- Local and cloud model compatibility
-- Memory and context management
-- Extensible tool system
-- Workflow orchestration
-- Autonomous task execution
-- Production-ready Python architecture
-- Comprehensive documentation
+  AI Provider                 JsonConversationRepository
+        │
+        ▼
 
----
-
-# Current Architecture
-
-```
-                 Project Argus
-
-                      │
-                      ▼
-                 Argus Engine
-                      │
-                      ▼
-               ProviderFactory
-                      │
-          ┌───────────┴───────────┐
-          ▼                       ▼
-   OpenAIProvider          OllamaProvider
-          │                       │
-          ▼                       ▼
-     OpenAI API            Local Ollama
-```
-
----
-
-# Planned Architecture (Brick #4)
-
-```
-                 Project Argus
-
-                      │
-                      ▼
-                 Argus Engine
-                      │
-      ┌───────────────┼────────────────┐
-      ▼               ▼                ▼
-   Memory          Providers        Tools
-                      │
-             ┌────────┴────────┐
-             ▼                 ▼
-        OpenAI           Ollama
+ OpenAI / Ollama
 ```
 
 ---
 
 # Project Structure
 
-```
+```text
 Project-Argus/
 │
 ├── app/
 │   ├── agents/
 │   ├── core/
-│   │   └── config.py
+│   │   ├── config.py
+│   │   └── constants.py
+│   │
+│   ├── engine/
+│   │
 │   ├── models/
+│   │   └── conversation.py
+│   │
 │   ├── providers/
 │   │   ├── base.py
 │   │   ├── exceptions.py
 │   │   ├── factory.py
 │   │   ├── ollama_provider.py
 │   │   └── openai_provider.py
+│   │
+│   ├── repositories/
+│   │   ├── conversation_repository.py
+│   │   └── json_conversation_repository.py
+│   │
 │   ├── services/
+│   │   └── context_builder.py
+│   │
 │   ├── utils/
 │   └── main.py
 │
@@ -161,10 +142,32 @@ Project-Argus/
 ├── tests/
 │
 ├── .env.example
-├── requirements.txt
 ├── README.md
+├── requirements.txt
 └── LICENSE
 ```
+
+---
+
+# Design Philosophy
+
+Project Argus follows a simple engineering philosophy.
+
+Every feature is built as a small architectural **brick**.
+
+Each brick introduces one clearly defined capability while leaving the project in a fully working state before moving to the next.
+
+Architectural abstractions are introduced only when justified by the evolving codebase—not preemptively.
+
+Core design principles include:
+
+- Provider-independent AI integration
+- Loose coupling
+- Dependency inversion
+- Separation of concerns
+- Incremental development
+- High testability
+- Long-term maintainability
 
 ---
 
@@ -184,12 +187,98 @@ Project-Argus/
 ## Planned
 
 - FastAPI
-- Docker
 - PostgreSQL
 - Redis
-- LangGraph (evaluation)
-- OpenTelemetry
+- Docker
 - Pytest
+- OpenTelemetry
+
+---
+
+# Roadmap
+
+## ✅ Phase 1 — Foundation
+
+- Project initialization
+- Environment configuration
+- Package architecture
+
+---
+
+## ✅ Phase 2 — Provider Layer
+
+- OpenAI integration
+- Ollama integration
+- Provider abstraction
+- ProviderFactory
+
+---
+
+## ✅ Phase 3 — Conversation System
+
+- Conversation model
+- Message model
+- ContextBuilder
+
+---
+
+## ✅ Phase 4 — Persistence
+
+- Repository abstraction
+- JSON persistence
+- Conversation restoration
+
+---
+
+## 🚧 Phase 5 — Runtime
+
+- Runtime orchestration
+- Automatic persistence
+- Session lifecycle
+- Runtime integration
+
+---
+
+## 📋 Phase 6 — Tools
+
+- Tool registry
+- Function calling
+- Tool execution
+
+---
+
+## 📋 Phase 7 — Memory
+
+- Long-term memory
+- Retrieval
+- Context pruning
+
+---
+
+## 📋 Phase 8 — Agents
+
+- Planner
+- Researcher
+- Executor
+- Multi-agent orchestration
+
+---
+
+## 📋 Phase 9 — Security
+
+- Encrypted persistence
+- Secrets management
+- Audit logging
+- Secure configuration
+
+---
+
+## 📋 Phase 10 — Deployment
+
+- REST API
+- CLI
+- Docker
+- Web UI
 
 ---
 
@@ -221,24 +310,22 @@ Create your environment file:
 cp .env.example .env
 ```
 
-## Configure the provider
-
 ### OpenAI
 
 ```env
-OPENAI_API_KEY=your_api_key_here
-OPENAI_MODEL=your_model
 AI_PROVIDER=openai
+OPENAI_API_KEY=your_api_key
+OPENAI_MODEL=your_model
 ```
 
-### Ollama (Local)
+### Ollama
 
 ```env
 AI_PROVIDER=ollama
 OLLAMA_MODEL=llama3.2:3b
 ```
 
-Run Project Argus:
+Run Argus:
 
 ```bash
 python -m app.main
@@ -246,51 +333,18 @@ python -m app.main
 
 ---
 
-# Roadmap
+# Development Workflow
 
-## ✅ Completed
-
-- [x] Project initialization
-- [x] Configuration management
-- [x] Package architecture
-- [x] Provider abstraction
-- [x] OpenAI provider
-- [x] Ollama provider
-- [x] ProviderFactory
-- [x] Local AI support
-
-## 🚧 In Progress
-
-- [ ] Argus Engine
-
-## 📋 Planned
-
-- [ ] Memory system
-- [ ] Tool execution framework
-- [ ] Agent framework
-- [ ] Conversation management
-- [ ] Workflow orchestration
-- [ ] Retrieval-Augmented Generation (RAG)
-- [ ] REST API
-- [ ] Web interface
-- [ ] Autonomous multi-agent execution
-
----
-
-# Development Philosophy
-
-Project Argus is being built as if it were a production software platform rather than a prototype.
-
-Every major feature follows the same development process:
+Every feature follows the same process:
 
 1. Design
 2. Implementation
 3. Testing
 4. Documentation
-5. Git versioning
-6. Development journal updates
+5. Git Commit
+6. Development Journal Update
 
-The goal is not simply to build an AI application, but to engineer a maintainable platform that can continue to grow over time.
+This keeps every architectural brick complete before beginning the next.
 
 ---
 
@@ -302,4 +356,11 @@ MIT License
 
 # Author
 
-Built by **Matthew Hugues** as an ongoing exploration of modern AI software engineering, autonomous systems, clean architecture, and production-ready Python development.
+Built by **Matthew Hugues** as an ongoing exploration of:
+
+- AI Engineering
+- Autonomous Systems
+- Clean Architecture
+- Production-ready Python
+- Software Design
+- Multi-Agent Systems
