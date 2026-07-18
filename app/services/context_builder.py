@@ -1,10 +1,23 @@
 from collections.abc import Sequence
 
-from app.models.conversation import Conversation, Message
+from app.core.constants import ARGUS_SYSTEM_PROMPT
+from app.models.conversation import (
+    Conversation,
+    Message,
+    MessageRole,
+)
 
 
 class ContextBuilder:
     """Builds the conversation context supplied to AI providers."""
+
+    def _system_message(self) -> Message:
+        """Create the default Argus system message."""
+
+        return Message(
+            role=MessageRole.SYSTEM,
+            content=ARGUS_SYSTEM_PROMPT,
+        )
 
     def build(
         self,
@@ -12,11 +25,6 @@ class ContextBuilder:
     ) -> Sequence[Message]:
         """
         Construct the ordered context for an AI provider.
-
-        The ContextBuilder is responsible for deciding what information
-        should be visible to the language model.
-
-        For now, this is simply the conversation history.
         """
 
         history = conversation.history()
@@ -26,4 +34,7 @@ class ContextBuilder:
                 "Conversation history cannot be empty."
             )
 
-        return history
+        return (
+            self._system_message(),
+            *history,
+        )
