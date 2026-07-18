@@ -1,83 +1,125 @@
 # Project Argus
 
-> A modular AI operations platform designed to orchestrate intelligent agents, automate complex workflows, and seamlessly integrate local and cloud language models.
+> A modular AI runtime for orchestrating intelligent agents, tools, memory, and multiple language model providers.
+
+**Current Version:** v0.3.0
 
 ---
 
-## Vision
+# Vision
 
-Project Argus is an open-source AI operations platform focused on building reliable, maintainable, and extensible AI systems.
+Project Argus is an open-source AI runtime focused on building reliable, maintainable, and extensible AI systems.
 
-Rather than being a single chatbot, Argus is designed to become an operating system for AI agents—capable of coordinating specialized agents, interacting with external services, and executing complex workflows autonomously.
+Rather than being a single chatbot, Argus is designed to become an operating system for AI—capable of coordinating specialized agents, interacting with external services, executing complex workflows, and seamlessly switching between local and cloud language models.
 
-The project is being built from the ground up with production-quality software engineering practices, emphasizing readability, modularity, testing, and long-term maintainability.
+The project is being built from the ground up using production-quality software engineering practices with an emphasis on modular architecture, readability, testing, maintainability, and long-term extensibility.
 
 ---
 
-## Current Status
+# Current Status
 
-**Stage:** Early Development
+**Stage:** Early Development (v0.3.0)
 
-Current progress includes:
+## Completed
 
-- Project architecture established
-- Secure environment configuration
-- Modular Python package structure
-- Git version control
-- GitHub repository
-- Foundation for provider abstraction
+- ✅ Project architecture established
+- ✅ Environment configuration
+- ✅ Modular Python package structure
+- ✅ Git & GitHub workflow
+- ✅ AI provider abstraction layer
+- ✅ OpenAI provider
+- ✅ Ollama provider
+- ✅ ProviderFactory
+- ✅ Local LLM support
+- ✅ Centralized provider exception handling
 
-Upcoming milestones include:
+## Currently Building
 
-- OpenAI provider implementation
-- Agent framework
+- 🚧 Argus Engine
+
+## Upcoming Milestones
+
 - Memory system
-- Tool execution layer
-- Multi-provider AI support
-- Local LLM integration
-- Autonomous workflow engine
+- Tool execution framework
+- Agent framework
+- Conversation management
+- Workflow orchestration
 
 ---
 
-## Goals
+# Design Principles
+
+Project Argus is intentionally built around clean architecture principles.
+
+Core design goals include:
+
+- Provider-independent AI integration
+- Loose coupling
+- Dependency inversion
+- Modular components
+- High testability
+- Clear separation of responsibilities
+- Incremental development
+- Long-term maintainability
+
+---
+
+# Goals
 
 Project Argus aims to provide:
 
 - Modular AI agent architecture
 - Provider-independent LLM support
 - Local and cloud model compatibility
-- Extensible tool system
 - Memory and context management
+- Extensible tool system
 - Workflow orchestration
-- Production-ready codebase
+- Autonomous task execution
+- Production-ready Python architecture
 - Comprehensive documentation
 
 ---
 
-## Planned Architecture
+# Current Architecture
 
 ```
-User
-  │
-  ▼
-Project Argus
-  │
-  ├──────────────┐
-  ▼              ▼
-Agents      Services
-  │              │
-  └──────┬───────┘
-         ▼
- Provider Interface
-         │
- ┌───────┼───────────┐
- │       │           │
-OpenAI Ollama Claude Gemini
+                 Project Argus
+
+                      │
+                      ▼
+               ProviderFactory
+                      │
+          ┌───────────┴───────────┐
+          ▼                       ▼
+   OpenAIProvider          OllamaProvider
+          │                       │
+          ▼                       ▼
+     OpenAI API            Local Ollama
 ```
 
 ---
 
-## Project Structure
+# Planned Architecture (Brick #4)
+
+```
+                 Project Argus
+
+                      │
+                      ▼
+                 Argus Engine
+                      │
+      ┌───────────────┼────────────────┐
+      ▼               ▼                ▼
+   Memory          Providers        Tools
+                      │
+             ┌────────┴────────┐
+             ▼                 ▼
+        OpenAI           Ollama
+```
+
+---
+
+# Project Structure
 
 ```
 Project-Argus/
@@ -85,35 +127,46 @@ Project-Argus/
 ├── app/
 │   ├── agents/
 │   ├── core/
+│   │   └── config.py
 │   ├── models/
 │   ├── providers/
+│   │   ├── base.py
+│   │   ├── exceptions.py
+│   │   ├── factory.py
+│   │   ├── ollama_provider.py
+│   │   └── openai_provider.py
 │   ├── services/
 │   ├── utils/
 │   └── main.py
 │
 ├── docs/
+│   └── development-journal.md
+│
 ├── tests/
 │
 ├── .env.example
 ├── requirements.txt
-└── README.md
+├── README.md
+└── LICENSE
 ```
 
 ---
 
-## Technology Stack
+# Technology Stack
+
+## Current
 
 - Python 3.12+
 - OpenAI SDK
+- Ollama
+- python-dotenv
 - Pydantic
 - Rich
-- python-dotenv
 - Git
 - GitHub
 
-Planned:
+## Planned
 
-- Ollama
 - FastAPI
 - Docker
 - PostgreSQL
@@ -124,21 +177,7 @@ Planned:
 
 ---
 
-## Development Philosophy
-
-Project Argus follows several core engineering principles:
-
-- Build incrementally.
-- Keep components loosely coupled.
-- Prefer composition over complexity.
-- Every module should have a single responsibility.
-- Refactor only when it improves clarity.
-- Avoid unnecessary dependencies.
-- Document decisions as the project evolves.
-
----
-
-## Getting Started
+# Getting Started
 
 Clone the repository:
 
@@ -166,9 +205,24 @@ Create your environment file:
 cp .env.example .env
 ```
 
-Add your OpenAI API key to `.env`.
+## Configure the provider
 
-Run the application:
+### OpenAI
+
+```env
+OPENAI_API_KEY=your_api_key_here
+OPENAI_MODEL=your_model
+AI_PROVIDER=openai
+```
+
+### Ollama (Local)
+
+```env
+AI_PROVIDER=ollama
+OLLAMA_MODEL=llama3.2:3b
+```
+
+Run Project Argus:
 
 ```bash
 python -m app.main
@@ -176,29 +230,60 @@ python -m app.main
 
 ---
 
-## Roadmap
+# Roadmap
+
+## ✅ Completed
 
 - [x] Project initialization
 - [x] Configuration management
 - [x] Package architecture
-- [ ] Provider abstraction
-- [ ] OpenAI integration
+- [x] Provider abstraction
+- [x] OpenAI provider
+- [x] Ollama provider
+- [x] ProviderFactory
+- [x] Local AI support
+
+## 🚧 In Progress
+
+- [ ] Argus Engine
+
+## 📋 Planned
+
+- [ ] Memory system
+- [ ] Tool execution framework
 - [ ] Agent framework
-- [ ] Conversation memory
-- [ ] Tool execution
-- [ ] Multi-provider support
-- [ ] Local LLM support
-- [ ] Web API
-- [ ] Autonomous workflows
+- [ ] Conversation management
+- [ ] Workflow orchestration
+- [ ] Retrieval-Augmented Generation (RAG)
+- [ ] REST API
+- [ ] Web interface
+- [ ] Autonomous multi-agent execution
 
 ---
 
-## License
+# Development Philosophy
+
+Project Argus is being built as if it were a production software platform rather than a prototype.
+
+Every major feature follows the same development process:
+
+1. Design
+2. Implementation
+3. Testing
+4. Documentation
+5. Git versioning
+6. Development journal updates
+
+The goal is not simply to build an AI application, but to engineer a maintainable platform that can continue to grow over time.
+
+---
+
+# License
 
 MIT License
 
 ---
 
-## Author
+# Author
 
-Built by Matthew Hugues as an ongoing exploration of modern AI software engineering, autonomous systems, and production-ready Python architecture.
+Built by **Matthew Hugues** as an ongoing exploration of modern AI software engineering, autonomous systems, clean architecture, and production-ready Python development.
