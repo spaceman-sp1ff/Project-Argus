@@ -1,7 +1,10 @@
+from collections.abc import Sequence
+
 import openai
 from openai import OpenAI
 
 from app.core.config import settings
+from app.models.conversation import Message, MessageRole
 from app.providers.base import AIProvider
 from app.providers.exceptions import (
     ProviderAuthenticationError,
@@ -29,16 +32,23 @@ class OpenAIProvider(AIProvider):
         self.client = OpenAI(api_key=settings.openai_api_key)
         self.model = settings.openai_model
 
-    def generate_response(self, prompt: str) -> str:
-        """Send a prompt to OpenAI and return the generated text."""
+    def generate_response(self, messages: Sequence[Message]) -> str:
+        """Generate a response using the supplied conversation history."""
 
-        if not prompt.strip():
-            raise ProviderRequestError("Prompt cannot be empty.")
+        if not messages:
+            raise ProviderRequestError(
+                "Conversation history cannot be empty."
+            )
+
+        serialized_messages = [
+            self._serialize_message(message)
+            for message in messages
+        ]
 
         try:
             response = self.client.responses.create(
                 model=self.model,
-                input=prompt,
+                input=serialized_messages,
             )
         except openai.AuthenticationError as exc:
             raise ProviderAuthenticationError(
@@ -77,7 +87,28 @@ class OpenAIProvider(AIProvider):
                 f"OpenAI request failed with status {exc.status_code}."
             ) from exc
 
-        return response.output_text
+        text = response.output_text.strip()
+
+        if not text:
+            raise ProviderRequestError(
+                "OpenAI returned an empty response."
+            )
+
+        return text
+
+    @staticmethod
+    def _serialize_message(message: Message) -> dict[str, str]:
+        """Convert an Argus message into OpenAI's input format."""
+
+        if message.role is MessageRole.TOOL:
+            raise ProviderRequestError(
+                "Tool messages are not supported yet."
+            )
+
+        return {
+            "role": message.role.value,
+            "content": message.content,
+        }
 
     @staticmethod
     def _get_error_code(exc: openai.APIStatusError) -> str | None:

@@ -1,6 +1,9 @@
+from collections.abc import Sequence
+
 import ollama
 
 from app.core.config import settings
+from app.models.conversation import Message, MessageRole
 from app.providers.base import AIProvider
 from app.providers.exceptions import (
     ProviderConfigurationError,
@@ -26,16 +29,23 @@ class OllamaProvider(AIProvider):
         self.model = settings.ollama_model
         self.client = ollama.Client(host=settings.ollama_host)
 
-    def generate_response(self, prompt: str) -> str:
-        """Send a prompt to a local Ollama model and return its response."""
+    def generate_response(self, messages: Sequence[Message]) -> str:
+        """Generate a response using the supplied conversation history."""
 
-        if not prompt.strip():
-            raise ProviderRequestError("Prompt cannot be empty.")
+        if not messages:
+            raise ProviderRequestError(
+                "Conversation history cannot be empty."
+            )
+
+        serialized_messages = [
+            self._serialize_message(message)
+            for message in messages
+        ]
 
         try:
-            response = self.client.generate(
+            response = self.client.chat(
                 model=self.model,
-                prompt=prompt,
+                messages=serialized_messages,
             )
         except ConnectionError as exc:
             raise ProviderConnectionError(
@@ -51,7 +61,7 @@ class OllamaProvider(AIProvider):
                 f"Ollama rejected the request: {exc.error}"
             ) from exc
 
-        text = response.response.strip()
+        text = response.message.content.strip()
 
         if not text:
             raise ProviderRequestError(
@@ -59,3 +69,17 @@ class OllamaProvider(AIProvider):
             )
 
         return text
+
+    @staticmethod
+    def _serialize_message(message: Message) -> dict[str, str]:
+        """Convert an Argus message into Ollama's chat message format."""
+
+        if message.role is MessageRole.TOOL:
+            raise ProviderRequestError(
+                "Tool messages are not supported yet."
+            )
+
+        return {
+            "role": message.role.value,
+            "content": message.content,
+        }

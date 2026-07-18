@@ -1,10 +1,13 @@
 from abc import ABC, abstractmethod
+from collections.abc import Sequence
+
+from app.models.conversation import Message
 
 
 class AIProvider(ABC):
     """Base contract for every AI model provider used by Project Argus."""
 
     @abstractmethod
-    def generate_response(self, prompt: str) -> str:
-        """Send a prompt to the provider and return its text response."""
+    def generate_response(self, messages: Sequence[Message]) -> str:
+        """Generate a response using an ordered conversation history."""
         raise NotImplementedError

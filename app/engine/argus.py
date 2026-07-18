@@ -24,7 +24,9 @@ class Argus:
 
         self.conversation.add_user_message(prompt)
 
-        content = self.provider.generate_response(prompt)
+        content = self.provider.generate_response(
+            self.conversation.history()
+        )
 
         self.conversation.add_assistant_message(content)
 
