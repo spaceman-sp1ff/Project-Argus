@@ -23,9 +23,7 @@ class ContextBuilder:
         self,
         conversation: Conversation,
     ) -> Sequence[Message]:
-        """
-        Construct the ordered context for an AI provider.
-        """
+        """Construct the ordered context for an AI provider."""
 
         history = conversation.history()
 
