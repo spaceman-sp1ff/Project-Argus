@@ -969,3 +969,232 @@ The project now contains a domain model, service layer, and persistence contract
 The next brick will introduce the first concrete persistence implementation for long-term memory.
 
 This implementation will satisfy the `MemoryRepository` contract using JSON storage, allowing memories to persist across application executions while leaving the remainder of the architecture unchanged.
+
+# Session 11 – Phase 7: Long-Term Memory
+
+## Brick 7.4 – JSON Memory Repository
+
+### Objective
+
+Complete the first fully functional implementation of Argus's long-term memory persistence layer.
+
+With the Memory domain model, repository contract, and application service already established, this brick introduces the first concrete repository capable of persisting memories across application executions.
+
+This marks the completion of the initial long-term memory architecture.
+
+---
+
+## Architectural Decision
+
+A `JsonMemoryRepository` was introduced as the first implementation of the `MemoryRepository` protocol.
+
+The repository provides persistence while remaining completely independent from application behavior.
+
+Its responsibilities are limited to:
+
+- serializing Memory objects
+- deserializing Memory objects
+- reading from disk
+- writing to disk
+- deleting stored memories
+
+The repository intentionally performs **no business logic**.
+
+---
+
+## Persistence Flow
+
+The complete memory workflow now consists of four distinct layers.
+
+```text
+Caller
+      │
+      ▼
+MemoryService
+      │
+      ▼
+MemoryRepository
+      │
+      ▼
+JsonMemoryRepository
+      │
+      ▼
+JSON Storage
+```
+
+Each layer maintains a single responsibility while depending only on the layer immediately below it.
+
+---
+
+## Dependency Injection
+
+The JSON repository accepts its storage location through constructor injection.
+
+```python
+repository = JsonMemoryRepository(
+    Path("data/memories.json")
+)
+```
+
+Rather than hardcoding file locations, the repository receives its configuration from the application.
+
+This improves flexibility, testing, and future container composition.
+
+---
+
+## Serialization
+
+Memory objects are converted into JSON-compatible dictionaries before being written to disk.
+
+Likewise, JSON records are reconstructed into validated `Memory` objects when loaded.
+
+This establishes a clean serialization boundary.
+
+```text
+Memory
+
+↓
+
+Dictionary
+
+↓
+
+JSON
+
+↓
+
+Disk
+```
+
+The domain model remains completely unaware of JSON or filesystem operations.
+
+---
+
+## Save Behavior
+
+The repository implements upsert semantics.
+
+When saving a memory:
+
+- new IDs are appended
+- existing IDs are replaced
+
+This guarantees a single stored record for every unique memory identifier.
+
+---
+
+## Error Handling
+
+Several infrastructure failures are handled explicitly.
+
+These include:
+
+- unreadable files
+- unwritable files
+- malformed JSON
+- invalid memory records
+- incorrect JSON structure
+
+Infrastructure errors are surfaced as clear runtime exceptions rather than silently ignoring corrupted state.
+
+---
+
+## Package API Audit
+
+During implementation, a package-level audit uncovered several incorrect `__init__.py` exports.
+
+As new modules had been added throughout Phase 7, existing package exports were unintentionally overwritten.
+
+The following package APIs were reviewed and corrected:
+
+- `app.models`
+- `app.repositories`
+- `app.services`
+
+All existing public exports were restored while exposing the newly added memory components.
+
+This reinforced an important architectural guideline:
+
+> Package-level `__init__.py` files define the public API of each subsystem and should be maintained intentionally.
+
+---
+
+## Validation
+
+The completed implementation was verified through several checks.
+
+- project compilation
+- package import validation
+- public API verification
+- JSON persistence testing
+- repository CRUD operations
+
+Successful validation confirmed that memories can now be:
+
+- created
+- persisted
+- reloaded
+- retrieved
+- deleted
+
+across independent application executions.
+
+---
+
+## Current Memory Architecture
+
+The memory subsystem now consists of:
+
+```text
+Memory
+      │
+      ▼
+MemoryService
+      │
+      ▼
+MemoryRepository
+      │
+      ▼
+JsonMemoryRepository
+      │
+      ▼
+Persistent JSON Storage
+```
+
+This represents the first complete end-to-end subsystem within Argus dedicated to retained knowledge.
+
+---
+
+## Lessons Learned
+
+Auditing package exports proved just as valuable as testing implementation code.
+
+Although the repository itself functioned correctly, incorrect package exports prevented portions of the application from importing successfully.
+
+Maintaining package APIs should therefore be considered part of architectural maintenance rather than simple housekeeping.
+
+The implementation also validated the decision to define interfaces before infrastructure.
+
+Because the `MemoryRepository` contract already existed, introducing persistent storage required no changes to the service layer.
+
+---
+
+## Brick Status
+
+✅ Brick 7.4 Complete
+
+Argus now possesses persistent long-term memory capable of surviving application restarts.
+
+This represents the completion of the first fully operational memory subsystem.
+
+---
+
+## Next Objective
+
+### Brick 7.5 – Container Composition
+
+The next brick will integrate the memory subsystem into the application's composition root.
+
+The `ArgusContainer` will become responsible for constructing and managing the `MemoryService` and `JsonMemoryRepository`, eliminating manual wiring and making long-term memory an official component of the Argus runtime.
+
+This completes the transition from a standalone memory implementation to an integrated application service.
