@@ -1,9 +1,24 @@
 from app.engine.argus import Argus
 from app.models.chat import ChatRequest
+from app.repositories.json_conversation_repository import (
+    JsonConversationRepository,
+)
+from app.runtime.argus_runtime import ArgusRuntime
+from app.services.context_builder import ContextBuilder
 
 
 def main() -> None:
-    argus = Argus()
+    engine = Argus()
+    context_builder = ContextBuilder()
+    conversation_repository = JsonConversationRepository()
+
+    runtime = ArgusRuntime(
+        engine=engine,
+        context_builder=context_builder,
+        conversation_repository=conversation_repository,
+    )
+
+    conversation = runtime.start_conversation()
 
     requests = [
         ChatRequest(prompt="My name is Matt."),
@@ -11,7 +26,10 @@ def main() -> None:
     ]
 
     for request in requests:
-        response = argus.chat(request)
+        response = runtime.chat(
+            conversation=conversation,
+            request=request,
+        )
 
         print("\n=== ARGUS RESPONSE ===\n")
         print(response.content)
