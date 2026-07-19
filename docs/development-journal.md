@@ -539,3 +539,134 @@ Begin **Phase 7 — Long-Term Memory**.
 The first goal will be defining the Memory domain and determining how Argus should store, retrieve, and inject relevant information across conversations while maintaining the project's layered architecture.
 
 ---
+
+# Session 8 – Phase 7: Long-Term Memory
+
+## Brick 7.1 – Memory Domain Model
+
+### Objective
+
+Begin Phase 7 by defining Argus's first long-term knowledge object.
+
+The goal of this brick was **not** to implement memory storage or retrieval, but to establish a clear domain model representing a single piece of retained knowledge.
+
+---
+
+## Architectural Decision
+
+One of the most important design decisions made during this phase is:
+
+> **A Memory is a fact, not a transcript.**
+
+Argus should not store raw conversations as long-term memory.
+
+Instead, conversations are distilled into meaningful facts that are useful in future interactions.
+
+Example:
+
+**Conversation**
+
+```
+User:
+I've been building Project Argus for the last few weeks.
+```
+
+becomes
+
+**Memory**
+
+```
+"The user is building Project Argus."
+```
+
+This keeps long-term memory concise, relevant, and independent from conversation history.
+
+---
+
+## Memory Model
+
+The initial `Memory` domain object contains:
+
+- id
+- content
+- source
+- created_at
+- importance
+- metadata
+
+Each memory represents a single immutable fact.
+
+Validation ensures:
+
+- memory content cannot be empty
+- source cannot be empty
+- importance remains within the range of 0.0–1.0
+- metadata is normalized and exposed as read-only
+
+---
+
+## Design Principles
+
+The Memory model follows the same architectural principles established throughout Argus:
+
+- immutable domain objects
+- explicit validation
+- single responsibility
+- framework-independent domain logic
+- clean separation between data and behavior
+
+At this stage, the Memory object contains **no persistence logic** and **no AI behavior**.
+
+Its sole responsibility is representing a valid memory.
+
+---
+
+## Why This Matters
+
+This is the first domain model representing knowledge instead of conversation.
+
+Previous phases focused primarily on:
+
+- providers
+- runtime orchestration
+- repositories
+- persistence
+- conversations
+
+Phase 7 introduces the foundation that will eventually allow Argus to retain useful information across sessions.
+
+---
+
+## Lessons Learned
+
+Initially there was discussion around introducing multiple memory types (facts, goals, preferences, projects, etc.).
+
+This was intentionally deferred.
+
+The simpler design proved stronger:
+
+- one Memory model
+- one repository
+- one service
+
+Additional abstractions will only be introduced when they solve a demonstrated problem rather than an anticipated one.
+
+This continues the project's philosophy of building the smallest architecture that solves today's problem while remaining extensible for tomorrow.
+
+---
+
+## Brick Status
+
+✅ Brick 7.1 Complete
+
+Argus now possesses its first long-term knowledge primitive.
+
+---
+
+## Next Objective
+
+Brick 7.2
+
+Define the `MemoryRepository` interface.
+
+This brick will establish the contract for storing and retrieving memories while intentionally avoiding persistence implementation until the interface has been finalized.
