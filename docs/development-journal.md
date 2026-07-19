@@ -670,3 +670,150 @@ Brick 7.2
 Define the `MemoryRepository` interface.
 
 This brick will establish the contract for storing and retrieving memories while intentionally avoiding persistence implementation until the interface has been finalized.
+
+# Session 9 – Phase 7: Long-Term Memory
+
+## Brick 7.2 – Memory Repository Contract
+
+### Objective
+
+Establish the persistence contract for Argus's long-term memory system.
+
+This brick intentionally focuses on defining the interface between the application's business logic and its persistence layer without introducing any concrete storage implementation.
+
+The goal is to ensure that every future memory backend adheres to the same contract regardless of how memories are ultimately stored.
+
+---
+
+## Architectural Decision
+
+A `MemoryRepository` protocol was introduced to define the operations required for persisting long-term memories.
+
+The initial contract consists of four core operations:
+
+- `save(memory)`
+- `get(memory_id)`
+- `list_all()`
+- `delete(memory_id)`
+
+These methods represent the minimum functionality required to support long-term memory while intentionally avoiding assumptions about the underlying storage mechanism.
+
+---
+
+## Separation of Responsibilities
+
+A key architectural decision made during this brick is that repositories should remain completely unaware of business logic.
+
+The repository answers only one question:
+
+> **How are memories stored and retrieved?**
+
+It deliberately does **not** answer:
+
+- What should Argus remember?
+- Which memories are important?
+- Which memories are relevant to a conversation?
+
+Those responsibilities will belong to the future `MemoryService`.
+
+This keeps persistence isolated from application logic and allows storage implementations to evolve independently.
+
+---
+
+## Repository Architecture
+
+The memory subsystem now follows the same architectural pattern established throughout the project:
+
+```text
+Memory
+        │
+        ▼
+MemoryRepository
+        │
+        ▼
+Future Repository Implementation
+```
+
+This maintains consistency with the existing conversation architecture and reinforces the project's layered design philosophy.
+
+---
+
+## Why Define the Contract First?
+
+Rather than immediately implementing JSON persistence, the repository interface was designed first.
+
+This provides several advantages:
+
+- allows multiple persistence implementations without modifying application code
+- encourages dependency inversion
+- simplifies future testing through repository mocking
+- prevents storage concerns from leaking into business logic
+
+By establishing the contract first, every future implementation must satisfy the same interface.
+
+---
+
+## Design Principles
+
+This brick continues several core principles established throughout Argus:
+
+- dependency inversion
+- interface-first design
+- explicit architectural boundaries
+- single responsibility
+- implementation independence
+
+The repository remains intentionally "dumb."
+
+Its responsibility is persistence—not intelligence.
+
+---
+
+## Current Memory Architecture
+
+The memory subsystem currently consists of:
+
+```text
+Memory
+        │
+        ▼
+MemoryRepository
+```
+
+Both components now exist as stable architectural foundations.
+
+The service layer and persistence implementation will build upon these abstractions in subsequent bricks.
+
+---
+
+## Lessons Learned
+
+An early consideration was adding query or search functionality directly to the repository.
+
+This idea was intentionally rejected.
+
+Searching for relevant memories is an application concern rather than a persistence concern.
+
+By keeping the repository limited to CRUD-style operations, the future `MemoryService` remains free to implement retrieval strategies ranging from simple filtering to semantic vector search without requiring changes to the repository contract.
+
+This decision preserves clean separation of concerns and minimizes coupling between storage and intelligence.
+
+---
+
+## Brick Status
+
+✅ Brick 7.2 Complete
+
+Argus now possesses a complete persistence contract for long-term memory.
+
+---
+
+## Next Objective
+
+### Brick 7.3 – Memory Service
+
+The next brick will introduce the first layer responsible for managing memory behavior.
+
+Unlike the repository, the `MemoryService` will begin defining **how Argus thinks about memory**, including creating, retrieving, and eventually deciding which information is worth retaining.
+
+This marks the transition from infrastructure to application intelligence.
