@@ -406,3 +406,136 @@ Begin implementing higher-level Runtime capabilities, including:
 - Planning
 - Agent orchestration
 - Additional application interfaces (CLI, API, UI)
+
+---
+
+# Session 7 — Phase 6: Application Composition
+
+**Date:** July 19, 2026
+
+## Goal
+
+Introduce a dedicated application composition layer responsible for constructing, owning, and providing the core Project Argus runtime.
+
+The objective of this phase was to remove dependency construction from the application entry point while establishing a clean composition root that will support future expansion into memory, tools, planners, and specialized modules.
+
+---
+
+## Accomplished
+
+### Brick 6.1 — Application Container
+
+- Created the new `app/bootstrap` package.
+- Implemented the initial `ArgusContainer`.
+- Established the application's first composition root.
+- Centralized dependency construction into a single location.
+
+### Brick 6.2 — Entry Point Refactor
+
+- Removed manual dependency construction from `main.py`.
+- Updated the application entry point to request a fully configured runtime from the container.
+- Reduced `main.py` to a lightweight application bootstrapper.
+
+### Brick 6.3 — Runtime Lifecycle
+
+- Introduced lazy runtime initialization.
+- Added runtime ownership to the container.
+- Implemented runtime caching so a container always returns the same runtime instance.
+- Separated public runtime access from private runtime construction.
+- Verified runtime identity through lifecycle testing.
+
+---
+
+## Architecture Evolution
+
+Previous startup flow:
+
+```text
+main.py
+├── Argus Engine
+├── ContextBuilder
+├── Conversation Repository
+└── ArgusRuntime
+```
+
+Current startup flow:
+
+```text
+main.py
+        │
+        ▼
+ArgusContainer
+        │
+        ▼
+ArgusRuntime
+        │
+        ▼
+Argus Engine
+        │
+        ▼
+AI Provider
+```
+
+The application entry point no longer owns dependency construction.
+
+Instead, it requests a configured runtime from the application's composition root.
+
+---
+
+## Public Container API
+
+```python
+container = ArgusContainer()
+
+runtime = container.runtime()
+```
+
+The caller is intentionally unaware of how the runtime is created.
+
+Whether the runtime is lazily initialized, cached, or rebuilt is now an implementation detail hidden behind the container's public interface.
+
+---
+
+## Lessons Learned
+
+- Application composition should occur at the application's boundary.
+- Entry points should remain lightweight and focused on startup logic.
+- Public APIs should describe **what** they provide rather than **how** they provide it.
+- Lazy initialization avoids unnecessary object construction.
+- Containers should own the lifecycle of shared application services.
+- Encapsulation applies not only to objects, but also to application composition.
+
+---
+
+## Milestone
+
+🧱 **Phase 6 Completed**
+
+Project Argus now has a dedicated application composition layer responsible for constructing and owning the application's runtime.
+
+This establishes the architectural foundation required for future capabilities without increasing complexity inside the application's entry point.
+
+---
+
+## Looking Ahead
+
+With the composition layer complete, future capabilities can be integrated by extending the container rather than modifying the application's startup logic.
+
+Planned subsystems include:
+
+- Long-Term Memory
+- Tool Registry
+- Tool Execution
+- Planning
+- Agent Orchestration
+- Specialized Capability Modules
+
+---
+
+## Next Objective
+
+Begin **Phase 7 — Long-Term Memory**.
+
+The first goal will be defining the Memory domain and determining how Argus should store, retrieve, and inject relevant information across conversations while maintaining the project's layered architecture.
+
+---
