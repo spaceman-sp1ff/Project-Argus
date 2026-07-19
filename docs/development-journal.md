@@ -328,3 +328,81 @@ Project Argus now has a dedicated Runtime responsible for orchestration while th
 ## Next Objective
 
 Update `main.py` to communicate exclusively through the `ArgusRuntime`, making the Runtime the official application entry point for all conversational interactions.
+
+---
+
+# Session 6 — Brick #5.5
+
+**Date:** July 18, 2026
+
+## Goal
+
+Complete the Runtime integration by making the Argus Runtime the application's primary entry point while simplifying `main.py` into a lightweight bootstrapper.
+
+## Accomplished
+
+- Updated `main.py` to communicate exclusively through the `ArgusRuntime`.
+- Moved application orchestration completely out of `main.py`.
+- Implemented dependency construction for:
+  - Argus Engine
+  - ContextBuilder
+  - ConversationRepository
+  - ArgusRuntime
+- Added conversation initialization through the Runtime.
+- Updated the application flow to process requests through `runtime.chat()`.
+- Successfully verified end-to-end execution using the Runtime.
+- Successfully verified automatic conversation persistence after each conversational turn.
+
+## Architecture Evolution
+
+The application's execution flow changed from:
+
+```text
+main.py
+   │
+   ▼
+Argus Engine
+   │
+   ▼
+AI Provider
+```
+
+to:
+
+```text
+main.py
+   │
+   ▼
+Argus Runtime
+   │
+   ▼
+Argus Engine
+   │
+   ▼
+AI Provider
+```
+
+The Runtime now serves as the single orchestration layer responsible for coordinating all application workflows while the Engine remains focused solely on AI execution.
+
+## Lessons Learned
+
+- Application entry points should remain as small as possible.
+- Dependency construction belongs at the application's boundary.
+- Separating bootstrapping from orchestration creates a cleaner and more maintainable architecture.
+- Completing architectural refactors incrementally makes validation and debugging significantly easier.
+
+## Milestone
+
+🧱 **Brick #5.5 completed**
+
+Project Argus now has a dedicated Runtime that serves as the official application entry point, establishing the layered architecture that future capabilities will build upon.
+
+## Next Objective
+
+Begin implementing higher-level Runtime capabilities, including:
+
+- Long-term memory
+- Tool execution
+- Planning
+- Agent orchestration
+- Additional application interfaces (CLI, API, UI)
