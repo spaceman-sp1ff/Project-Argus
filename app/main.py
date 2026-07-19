@@ -1,22 +1,10 @@
-from app.engine.argus import Argus
+from app.bootstrap import ArgusContainer
 from app.models.chat import ChatRequest
-from app.repositories.json_conversation_repository import (
-    JsonConversationRepository,
-)
-from app.runtime.argus_runtime import ArgusRuntime
-from app.services.context_builder import ContextBuilder
 
 
 def main() -> None:
-    engine = Argus()
-    context_builder = ContextBuilder()
-    conversation_repository = JsonConversationRepository()
-
-    runtime = ArgusRuntime(
-        engine=engine,
-        context_builder=context_builder,
-        conversation_repository=conversation_repository,
-    )
+    container = ArgusContainer()
+    runtime = container.create_runtime()
 
     conversation = runtime.start_conversation()
 
