@@ -817,3 +817,155 @@ The next brick will introduce the first layer responsible for managing memory be
 Unlike the repository, the `MemoryService` will begin defining **how Argus thinks about memory**, including creating, retrieving, and eventually deciding which information is worth retaining.
 
 This marks the transition from infrastructure to application intelligence.
+
+# Session 10 – Phase 7: Long-Term Memory
+
+## Brick 7.3 – Memory Service
+
+### Objective
+
+Introduce the application service responsible for managing Argus's long-term memory.
+
+With the Memory domain model and repository contract already established, this brick completes the application's first memory workflow by introducing the layer responsible for coordinating memory operations.
+
+The service acts as the public interface for creating, retrieving, listing, and forgetting memories while remaining independent of any persistence implementation.
+
+---
+
+## Architectural Decision
+
+The `MemoryService` was introduced as the owner of memory-related application behavior.
+
+Rather than requiring callers to manually construct `Memory` objects, the service accepts raw application data and creates validated domain objects internally.
+
+Example:
+
+```python
+memory_service.remember(
+    content="The user is building Project Argus.",
+    source="conversation",
+    importance=0.9,
+)
+```
+
+This keeps object construction centralized while ensuring every memory enters the system through a consistent workflow.
+
+---
+
+## Responsibilities
+
+The initial MemoryService exposes four operations:
+
+- `remember()`
+- `get()`
+- `all()`
+- `forget()`
+
+These operations intentionally mirror the application's current needs while remaining independent of storage technology.
+
+The service delegates persistence entirely to the `MemoryRepository`.
+
+---
+
+## Layered Architecture
+
+The memory subsystem now follows the complete application pattern established throughout Argus.
+
+```text
+Caller
+      │
+      ▼
+MemoryService
+      │
+      ▼
+MemoryRepository
+      │
+      ▼
+Future Repository Implementation
+```
+
+This separation keeps business behavior independent from persistence while preserving dependency inversion.
+
+---
+
+## Separation of Concerns
+
+An important architectural boundary was established during this brick.
+
+The MemoryService is responsible for managing memories.
+
+It is **not** yet responsible for deciding what should become a memory.
+
+Likewise, the repository remains responsible only for persistence.
+
+This leaves future intelligence isolated to dedicated application logic rather than spreading decision-making throughout the system.
+
+---
+
+## Design Principles
+
+The MemoryService continues several architectural principles already established across Argus:
+
+- dependency injection
+- dependency inversion
+- explicit orchestration
+- single responsibility
+- implementation independence
+
+The service depends only on the `MemoryRepository` protocol rather than any concrete persistence implementation.
+
+---
+
+## Current Memory Architecture
+
+The subsystem now consists of three layers.
+
+```text
+Memory
+      │
+      ▼
+MemoryService
+      │
+      ▼
+MemoryRepository
+```
+
+This completes the initial architecture of the memory subsystem before introducing storage implementations.
+
+---
+
+## Lessons Learned
+
+The service intentionally remains lightweight.
+
+Future capabilities such as:
+
+- automatic memory extraction
+- semantic search
+- relevance scoring
+- memory consolidation
+- embedding generation
+
+have been intentionally deferred.
+
+The focus remains on building the smallest architecture that satisfies today's requirements while leaving clear extension points for future intelligence.
+
+---
+
+## Brick Status
+
+✅ Brick 7.3 Complete
+
+Argus now possesses its first complete application workflow for long-term memory.
+
+The project now contains a domain model, service layer, and persistence contract dedicated to retained knowledge.
+
+---
+
+## Next Objective
+
+### Brick 7.4 – JSON Memory Repository
+
+The next brick will introduce the first concrete persistence implementation for long-term memory.
+
+This implementation will satisfy the `MemoryRepository` contract using JSON storage, allowing memories to persist across application executions while leaving the remainder of the architecture unchanged.
