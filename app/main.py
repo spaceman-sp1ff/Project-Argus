@@ -4,7 +4,7 @@ from app.models.chat import ChatRequest
 
 def main() -> None:
     container = ArgusContainer()
-    runtime = container.create_runtime()
+    runtime = container.runtime()
 
     conversation = runtime.start_conversation()
 

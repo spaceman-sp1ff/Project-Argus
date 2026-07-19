@@ -7,10 +7,21 @@ from app.services.context_builder import ContextBuilder
 
 
 class ArgusContainer:
-    """Constructs and connects Project Argus application components."""
+    """Constructs, owns, and provides Project Argus application components."""
 
-    def create_runtime(self) -> ArgusRuntime:
-        """Create a fully configured Argus Runtime."""
+    def __init__(self) -> None:
+        self._runtime: ArgusRuntime | None = None
+
+    def runtime(self) -> ArgusRuntime:
+        """Return the application runtime, creating it when first requested."""
+
+        if self._runtime is None:
+            self._runtime = self._build_runtime()
+
+        return self._runtime
+
+    def _build_runtime(self) -> ArgusRuntime:
+        """Construct a fully configured Argus Runtime."""
 
         engine = Argus()
         context_builder = ContextBuilder()
