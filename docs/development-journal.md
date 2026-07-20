@@ -1198,3 +1198,160 @@ The next brick will integrate the memory subsystem into the application's compos
 The `ArgusContainer` will become responsible for constructing and managing the `MemoryService` and `JsonMemoryRepository`, eliminating manual wiring and making long-term memory an official component of the Argus runtime.
 
 This completes the transition from a standalone memory implementation to an integrated application service.
+
+# Session 12 – Phase 7: Long-Term Memory
+
+## Brick 7.5 – Container Composition
+
+### Objective
+
+Integrate the completed long-term memory subsystem into the application's composition root.
+
+Rather than manually constructing memory-related components throughout the application, responsibility for creating and managing these dependencies has been centralized within the `ArgusContainer`.
+
+This establishes memory as a first-class subsystem of Project Argus.
+
+---
+
+## Architectural Decision
+
+The `ArgusContainer` now owns the lifecycle of the memory subsystem.
+
+Two new lazily initialized components were introduced:
+
+- `JsonMemoryRepository`
+- `MemoryService`
+
+Both components are constructed only when first requested and reused for the lifetime of the application.
+
+This follows the same composition pattern already established for the runtime.
+
+---
+
+## Dependency Graph
+
+The container now owns the complete memory dependency chain.
+
+```text
+ArgusContainer
+      │
+      ├── JsonMemoryRepository
+      │
+      └── MemoryService
+              │
+              ▼
+      JsonMemoryRepository
+```
+
+The `MemoryService` depends only on the repository abstraction while the container is responsible for providing the concrete implementation.
+
+---
+
+## Composition Root
+
+The application now has a single location responsible for constructing memory-related dependencies.
+
+```text
+ArgusContainer
+      │
+      ├── Runtime
+      ├── ContextBuilder
+      ├── ConversationRepository
+      ├── MemoryRepository
+      └── MemoryService
+```
+
+This reinforces the role of the container as the application's composition root.
+
+---
+
+## Lazy Initialization
+
+Memory components are created only when needed.
+
+The container caches each instance after its initial construction, ensuring that every consumer receives the same object throughout the application's lifetime.
+
+This prevents unnecessary object creation while maintaining a single source of truth for memory persistence.
+
+---
+
+## Validation
+
+Several validation checks were performed.
+
+- verified repository caching
+- verified service caching
+- verified shared repository instance
+- verified successful project compilation
+- verified package imports
+
+The following conditions were confirmed:
+
+```text
+container.memory_repository()
+    is
+container.memory_repository()
+
+True
+
+container.memory_service()
+    is
+container.memory_service()
+
+True
+
+container.memory_service()._repository
+    is
+container.memory_repository()
+
+True
+```
+
+These checks confirmed that the container correctly manages dependency lifecycles.
+
+---
+
+## Architectural Impact
+
+Prior to this brick, the memory subsystem existed only as a collection of independent components.
+
+Following this implementation, the subsystem has become an integrated application service managed entirely through dependency injection.
+
+Importantly, the runtime remains unaware of memory.
+
+This separation preserves a clean architectural boundary while preparing the application for future integration.
+
+---
+
+## Lessons Learned
+
+Introducing a subsystem should occur in two distinct stages.
+
+1. Integrate ownership through the composition root.
+2. Inject the dependency into consuming components.
+
+Separating these responsibilities keeps each architectural change small, testable, and easy to reason about.
+
+It also prevents the runtime from gradually becoming a "God class" by ensuring responsibilities are introduced intentionally.
+
+---
+
+## Brick Status
+
+✅ Brick 7.5 Complete
+
+The long-term memory subsystem is now fully managed by the application's composition root and is available for dependency injection throughout Project Argus.
+
+---
+
+## Next Objective
+
+### Brick 7.6 – Runtime Integration
+
+The next brick will inject the `MemoryService` into the `ArgusRuntime`.
+
+At this stage, the runtime will become aware of the memory subsystem through dependency injection only.
+
+No memory creation or retrieval behavior will be added yet.
+
+This preserves the runtime's role as an orchestrator while preparing the foundation for future intelligent memory workflows.
