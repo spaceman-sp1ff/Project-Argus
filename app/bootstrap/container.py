@@ -54,7 +54,8 @@ class ArgusContainer:
         conversation_repository = JsonConversationRepository()
 
         return ArgusRuntime(
-            engine=engine,
-            context_builder=context_builder,
-            conversation_repository=conversation_repository,
-        )
+    engine=engine,
+    context_builder=context_builder,
+    conversation_repository=conversation_repository,
+    memory_service=self.memory_service(),
+)

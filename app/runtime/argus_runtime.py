@@ -3,8 +3,11 @@ from uuid import UUID
 from app.engine.argus import Argus
 from app.models.chat import ChatRequest, ChatResponse
 from app.models.conversation import Conversation
-from app.repositories.conversation_repository import ConversationRepository
+from app.repositories.conversation_repository import (
+    ConversationRepository,
+)
 from app.services.context_builder import ContextBuilder
+from app.services.memory_service import MemoryService
 
 
 class ArgusRuntime:
@@ -15,10 +18,12 @@ class ArgusRuntime:
         engine: Argus,
         context_builder: ContextBuilder,
         conversation_repository: ConversationRepository,
+        memory_service: MemoryService,
     ) -> None:
         self._engine = engine
         self._context_builder = context_builder
         self._conversation_repository = conversation_repository
+        self._memory_service = memory_service
 
     def start_conversation(self) -> Conversation:
         """Create and return a new conversation."""
