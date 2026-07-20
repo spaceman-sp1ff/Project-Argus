@@ -1355,3 +1355,149 @@ At this stage, the runtime will become aware of the memory subsystem through dep
 No memory creation or retrieval behavior will be added yet.
 
 This preserves the runtime's role as an orchestrator while preparing the foundation for future intelligent memory workflows.
+
+# Session 13 – Phase 7: Long-Term Memory
+
+## Brick 7.6 – Runtime Integration
+
+### Objective
+
+Integrate the long-term memory subsystem into the application runtime through dependency injection.
+
+This brick does **not** introduce any new memory behavior.
+
+Instead, it establishes the architectural relationship between the runtime and the memory subsystem while preserving clear separation of responsibilities.
+
+---
+
+## Architectural Decision
+
+The `ArgusRuntime` now receives a `MemoryService` during construction.
+
+This dependency is provided by the `ArgusContainer`, allowing the runtime to access memory functionality without knowing how memories are stored or managed.
+
+The runtime depends only on the application service.
+
+It remains completely unaware of repository implementations or persistence details.
+
+---
+
+## Dependency Injection
+
+The runtime constructor was extended to receive a `MemoryService`.
+
+```text
+ArgusContainer
+      │
+      ▼
+MemoryService
+      │
+      ▼
+ArgusRuntime
+```
+
+The container continues to act as the application's composition root, supplying every required dependency during runtime construction.
+
+---
+
+## Responsibility Boundaries
+
+Although the runtime now owns a reference to the memory service, no additional behavior was introduced.
+
+The runtime does **not**:
+
+- create memories
+- retrieve memories
+- perform searches
+- decide what should be remembered
+- communicate with repositories directly
+
+Its responsibility remains coordinating the lifecycle of a conversation.
+
+This preserves the runtime as an orchestrator rather than allowing it to accumulate unrelated business logic.
+
+---
+
+## Architectural Rationale
+
+Separating dependency injection from behavior keeps architectural changes small and easily verifiable.
+
+The memory subsystem now exists within the runtime without affecting existing conversation flow.
+
+Future enhancements can build upon this dependency without modifying the underlying composition architecture.
+
+This incremental approach reduces risk while maintaining a clear separation between infrastructure and application behavior.
+
+---
+
+## Validation
+
+The implementation was validated through several checks.
+
+- project compilation
+- runtime construction
+- dependency injection verification
+- package import validation
+
+The following assertion confirmed successful integration.
+
+```text
+runtime._memory_service
+    is
+container.memory_service()
+
+True
+```
+
+This verified that the runtime receives the same managed instance owned by the application container.
+
+---
+
+## Current Runtime Architecture
+
+The runtime now coordinates four major application services.
+
+```text
+ArgusRuntime
+│
+├── Argus Engine
+├── ContextBuilder
+├── ConversationRepository
+└── MemoryService
+```
+
+Each dependency represents a distinct application concern while remaining independently replaceable.
+
+---
+
+## Lessons Learned
+
+Dependency injection should be introduced before behavior.
+
+By integrating the memory service first, future memory functionality can be implemented without altering the application's composition model.
+
+This approach also prevents the runtime from gradually evolving into a "God class."
+
+Instead, the runtime continues serving as a coordinator while specialized services own their respective domains.
+
+---
+
+## Brick Status
+
+✅ Brick 7.6 Complete
+
+The runtime is now aware of the memory subsystem through dependency injection while remaining behaviorally unchanged.
+
+This completes the infrastructure required for runtime-managed long-term memory.
+
+---
+
+## Next Objective
+
+### Brick 7.7 – Memory Extraction Strategy
+
+With the memory subsystem fully integrated, the next phase will focus on determining **what information deserves to become a memory**.
+
+Rather than embedding this decision directly within the runtime, a dedicated component will be introduced to evaluate conversation turns and identify meaningful long-term knowledge.
+
+This preserves the runtime's role as an orchestrator while allowing memory extraction logic to evolve independently.
