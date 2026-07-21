@@ -3,8 +3,8 @@
 > **A modular AI runtime for orchestrating intelligent agents, tools, memory, and multiple language model providers.**
 
 ![Status](https://img.shields.io/badge/status-active%20development-orange)
-![Version](https://img.shields.io/badge/version-v0.6.0--dev-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+![Version](https://img.shields.io/badge/version-v0.7.0--dev-blue)
+![License](https://img.shields.io/badge/license-No license yet-red)
 
 ---
 
